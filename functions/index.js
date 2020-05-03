@@ -248,18 +248,16 @@ app.intent('actions_intent_PERMISSION', (conv, params, permissionGranted) => {
 
 // Handle the Dialogflow intent named 'favorite color'.
 // The intent collects a parameter named 'color'.
-app.intent('favorite color', (conv, {color}) => {
-  const luckyNumber = color.length;
-  const audioSound = 'https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg';
+app.intent('statistics', (conv, {color}) => {
   if (conv.user.storage.userName) {
     // If we collected user name previously, address them by name and use SSML
     // to embed an audio snippet in the response.
-    conv.ask(`<speak>${conv.user.storage.userName}, your lucky number is ` +
-      `${luckyNumber}.<audio src="${audioSound}"></audio> ` +
+    conv.ask(`<speak>${conv.user.storage.userName}, I see you want to hear some stats. ` +
+      `${statisticIntent}.<audio src="${pause}"></audio> ` +
       `Would you like to hear some fake colors?</speak>`);
     conv.ask(new Suggestions('Yes', 'No'));
   } else {
-    conv.ask(`<speak>Your lucky number is ${luckyNumber}.` +
+    conv.ask(`<speak>Your lucky number is ${statisticIntent}.` +
       `<audio src="${audioSound}"></audio> ` +
       `Would you like to hear some fake colors?</speak>`);
     conv.ask(new Suggestions('Yes', 'No'));
@@ -293,13 +291,6 @@ app.intent('actions_intent_NO_INPUT', (conv) => {
     conv.close(`Sorry we're having trouble. Let's ` +
       `try this again later. Goodbye.`);
   }
-});
-
-// Handle the Dialogflow follow-up intents
-app.intent(['favorite color - yes', 'favorite fake color - yes'], (conv) => {
-  conv.ask('Which color, indigo taco, pink unicorn or blue grey coffee?');
-  // If the user is using a screened device, display the carousel
-  if (conv.screen) return conv.ask(fakeColorCarousel());
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
