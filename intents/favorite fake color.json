@@ -1,0 +1,48 @@
+{
+  "id": "efded27e-5d6b-437e-bdb4-09a29d1fcaee",
+  "name": "favorite fake color",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "",
+      "affectedContexts": [
+        {
+          "name": "favoritefakecolor-followup",
+          "parameters": {},
+          "lifespan": 2
+        }
+      ],
+      "parameters": [
+        {
+          "id": "a4fc2012-e22f-4f1b-b5ca-e91d73a48f6b",
+          "required": false,
+          "dataType": "@fakeColor",
+          "name": "fakeColor",
+          "value": "$fakeColor",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1537256351,
+  "fallbackIntent": false,
+  "events": [
+    {
+      "name": "actions_intent_OPTION"
+    }
+  ]
+}

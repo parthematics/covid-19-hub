@@ -1,0 +1,39 @@
+{
+  "id": "4ae3cf06-5e55-47c2-b955-607954f6d05f",
+  "name": "Unrecognized Deep Link",
+  "auto": true,
+  "contexts": [
+    "google_assistant_welcome"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "2abed087-d170-47d8-b108-9d63d18b06bd",
+          "required": false,
+          "dataType": "@sys.any",
+          "name": "any",
+          "value": "$any",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "Sorry, I am not sure about $any . What\u0027s your favorite color?"
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1532460082,
+  "fallbackIntent": false,
+  "events": []
+}

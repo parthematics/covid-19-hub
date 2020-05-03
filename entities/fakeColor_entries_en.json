@@ -1,0 +1,23 @@
+[
+  {
+    "value": "indigo taco",
+    "synonyms": [
+      "indigo taco",
+      "the first one"
+    ]
+  },
+  {
+    "value": "pink unicorn",
+    "synonyms": [
+      "pink unicorn",
+      "the second one"
+    ]
+  },
+  {
+    "value": "blue grey coffee",
+    "synonyms": [
+      "blue grey coffee",
+      "the third one"
+    ]
+  }
+]
