@@ -246,36 +246,40 @@ app.intent('actions_intent_PERMISSION', (conv, params, permissionGranted) => {
   }
 });
 
-// Handle the Dialogflow intent named 'favorite color'.
-// The intent collects a parameter named 'color'.
-app.intent('statistics', (conv, {color}) => {
+// Handle the Dialogflow intent named 'statistics'.
+// The intent collects a parameter named 'statisticIntent'.
+app.intent('statistics', (conv, {statisticIntent}) => {
   if (conv.user.storage.userName) {
     // If we collected user name previously, address them by name and use SSML
     // to embed an audio snippet in the response.
     conv.ask(`<speak>${conv.user.storage.userName}, I see you want to hear some stats. ` +
       `${statisticIntent}.<audio src="${pause}"></audio> ` +
-      `Would you like to hear some fake colors?</speak>`);
+      `Would you like to hear information on specific countries or just global information?</speak>`);
     conv.ask(new Suggestions('Yes', 'No'));
   } else {
-    conv.ask(`<speak>Your lucky number is ${statisticIntent}.` +
-      `<audio src="${audioSound}"></audio> ` +
-      `Would you like to hear some fake colors?</speak>`);
+    conv.ask(`<speak>Got it. Here's what I got from ${userCountryIntent}.` +
+      `<audio src="${pause}"></audio> ` +
+      `Would you like to hear some more statistics?</speak>`);
     conv.ask(new Suggestions('Yes', 'No'));
   }
 });
 
-// Handle the Dialogflow intent named 'favorite fake color'.
-// The intent collects a parameter named 'fakeColor'.
-app.intent('favorite fake color', (conv, {fakeColor}) => {
-  fakeColor = conv.arguments.get('OPTION') || fakeColor;
-  // Present user with the corresponding basic card and end the conversation.
-  if (!conv.screen) {
-    conv.ask(colorMap[fakeColor].text);
+// Handle the Dialogflow intent named 'advice'.
+// The intent collects a parameter named 'symptoms'.
+app.intent('advice', (conv, {symptoms}) => {
+  if (conv.user.storage.userName) {
+    // If we collected user name previously, address them by name and use SSML
+    // to embed an audio snippet in the response.
+    conv.ask(`<speak>${conv.user.storage.userName}, I see you want to hear some advice. ` +
+      `${symptoms}.<audio src="${pause}"></audio> ` +
+      `Are you displaying any of the following symptoms? ${severeSymptomList}</speak>`);
+    conv.ask(new Suggestions('Yes', 'No'));
   } else {
-    conv.ask(`Here you go.`, new BasicCard(colorMap[fakeColor]));
+    conv.ask(`<speak>Got it. Here's what I got from some reputable medical sources.` +
+      `<audio src="${pause}"></audio> ` +
+      `Would you like to hear some more information on symptoms?</speak>`);
+    conv.ask(new Suggestions('Yes', 'No'));
   }
-  conv.ask('Do you want to hear about another fake color?');
-  conv.ask(new Suggestions('Yes', 'No'));
 });
 
 // Handle the Dialogflow NO_INPUT intent.
@@ -286,9 +290,9 @@ app.intent('actions_intent_NO_INPUT', (conv) => {
   if (repromptCount === 0) {
     conv.ask('Which of the mentioned categories do you need help with?');
   } else if (repromptCount === 1) {
-    conv.ask(`Please say the name of a color.`);
+    conv.ask(`Please repeat that. I can help with symptoms if you need.`);
   } else if (conv.arguments.get('IS_FINAL_REPROMPT')) {
-    conv.close(`Sorry we're having trouble. Let's ` +
+    conv.close(`Sorry I'm having trouble understanding you. Let's ` +
       `try this again later. Goodbye.`);
   }
 });
