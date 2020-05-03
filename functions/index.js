@@ -17,11 +17,10 @@
 // from the Actions on Google client library.
 const {
   dialogflow,
-  BasicCard,
   Permission,
   Suggestions,
-  Carousel,
   Image,
+  Webhook
 } = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
@@ -30,36 +29,54 @@ const functions = require('firebase-functions');
 // Instantiate the Dialogflow client.
 const app = dialogflow({debug: true});
 
-// Define a mapping of fake color strings to basic card objects.
-const colorMap = {
-  'indigo taco': {
-    title: 'Indigo Taco',
-    text: 'Indigo Taco is a subtle bluish tone.',
-    image: {
-      url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDN1JRbF9ZMHZsa1k/style-color-uiapplication-palette1.png',
-      accessibilityText: 'Indigo Taco Color',
-    },
-    display: 'WHITE',
-  },
-  'pink unicorn': {
-    title: 'Pink Unicorn',
-    text: 'Pink Unicorn is an imaginative reddish hue.',
-    image: {
-      url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDbFVfTXpoaEE5Vzg/style-color-uiapplication-palette2.png',
-      accessibilityText: 'Pink Unicorn Color',
-    },
-    display: 'WHITE',
-  },
-  'blue grey coffee': {
-    title: 'Blue Grey Coffee',
-    text: 'Calling out to rainy days, Blue Grey Coffee brings to mind your favorite coffee shop.',
-    image: {
-      url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDZUdpeURtaTUwLUk/style-color-colorsystem-gray-secondary-161116.png',
-      accessibilityText: 'Blue Grey Coffee Color',
-    },
-    display: 'WHITE',
-  },
-};
+// Define Firebase  and Google Cloud functions that will be needed
+const functions = require('firebase-functions');
+const {dialogflow} = require ('actions-on-google');
+const Datastore = require('@google-cloud/datastore');
+
+// Instantiate a datastore client
+const datastore = Datastore();
+const WELCOME_INTENT = 'Default Welcome Intent';
+const FALLBACK_INTENT = 'Default Fallback Intent';
+const LOOKING_FOR_TWEET_INTENT = 'LookingForTweet';
+const TWEET_TYPE_ENTITY = 'TweetType';
+const LOOKING_FOR_STATS_INTENT = 'LookingForTweet';
+const STATS_TYPE_ENTITY = 'TweetType';
+const LOOKING_FOR_ADVICE_INTENT = 'LookingForTweet';
+const TWEET_TYPE_ENTITY = 'TweetType';
+const LOOKING_FOR_TWEET_INTENT = 'LookingForTweet';
+const TWEET_TYPE_ENTITY = 'TweetType';
+
+const app = dialogflow();
+
+app.intent(WELCOME_INTENT, (conv) => {
+    conv.ask("welcome to Dr.Motivation! Ask for a quote about friendship or romance or motivation");
+});
+app.intent(FALLBACK_INTENT, (conv) => {
+    conv.ask("Stop mumbling & speak up");
+});
+const query1 = datastore.createQuery('QuoteTable').filter('QuoteType', '=', 'Motivational');
+const query2 = datastore.createQuery('QuoteTable').filter('QuoteType', '=', 'Friendship');
+const query3 = datastore.createQuery('QuoteTable').filter('QuoteType', '=', "Romantic");
+app.intent(LOOKING_FOR_TWEET_INTENT, (conv) => {
+     const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
+     if (quote_type == "motivational") { 
+         return datastore.runQuery(query1).then(results => {
+            conv.ask(results[0][1].Quote);
+        });
+     } else if (quote_type == "friendship") {
+        return datastore.runQuery(query2).then(results => {
+            conv.ask(results[0][1].Quote);
+        });
+     } else if (quote_type == "romantic") {
+     return datastore.runQuery(query3).then(results => {
+            conv.ask(results[0][0].Quote);
+        });
+     } else {
+         conv.ask("get off your ass and work instead of talking to me");
+     }
+});
+exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
 // In the case the user is interacting with the Action on a screened device
 // The Fake Color Carousel will display a carousel of color cards
