@@ -23,7 +23,7 @@
     "autoPreviewEnabled": true,
     "isDeviceAgent": false
   },
-  "defaultTimezone": "America/Denver",
+  "defaultTimezone": "America/New_York",
   "webhook": {
     "url": "https://example.com",
     "headers": {
