@@ -64,14 +64,17 @@ const query2 = datastore.createQuery('IntentsTable').filter('IntentType', '=', S
 const query3 = datastore.createQuery('IntentsTable').filter('IntentType', '=', ADVICE_TYPE_ENTITY);
 const query4 = datastore.createQuery('IntentsTable').filter('IntentType', '=', NEWS_TYPE_ENTITY);
 var figure_index = -1;
-var organization_index = -1;
+var org_index = -1;
 
 app.intent(LOOKING_FOR_TWEET_INTENT, (conv) => {
   const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
-  // listed of trusted public figures whose tweets to trust
+  // listed of trusted public figures whose tweets to trust, along with trusted organizations
   var figures = ['jburnmurdoch', 'jkwan_md', 'ishaberry2', 'aslavitt', 'scottgottliebmd', 'bogochisaac', 'erictopol', 'nachristakis'];
+  var orgs = ['cdcgov', 'govcanhealth', 'who'];
   figure_index += 1;
+  org_index += 1;
   figure_name = figures[figure_index];
+  organization_name = orgs[org_index];  
 
   // making the request to the Twitter API
   let request = new XMLHttpRequest();
@@ -91,15 +94,15 @@ app.intent(LOOKING_FOR_TWEET_INTENT, (conv) => {
 
   if (quote_type == TWEET_TYPE_ENTITY) { 
     return datastore.runQuery(query1).then(results => {
-        conv.ask("Here's what I got from " + request.response['0']['full_text'] + ". Would you like to hear more?" );
+      conv.ask("Here's what I got from " + request.response['0']['full_text'] + ". Would you like to hear more?" );
     });
   } else if (quote_type == ADVICE_TYPE_ENTITY) {
     return datastore.runQuery(query2).then(results => {
-        conv.ask(results[0][1].Quote);
+      conv.ask("I see you want some advice. Do you currently have any symptoms?");
     });
   } else if (quote_type == NEWS_TYPE_ENTITY) {
     return datastore.runQuery(query3).then(results => {
-        conv.ask(results[0][0].Quote);
+      conv.ask("I see you want to hear about news. Would you like to go back to the start?" );
     });
   } else {
       conv.ask("Sorry, I didn't understand. Did you want to hear more tweets?");
@@ -108,97 +111,109 @@ app.intent(LOOKING_FOR_TWEET_INTENT, (conv) => {
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
 app.intent(LOOKING_FOR_STATS_INTENT, (conv) => {
-  const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
-  if (quote_type == "motivational") { 
-      return datastore.runQuery(query1).then(results => {
-         conv.ask(results[0][1].Quote);
-     });
-  } else if (quote_type == "friendship") {
-     return datastore.runQuery(query2).then(results => {
-         conv.ask(results[0][1].Quote);
-     });
-  } else if (quote_type == "romantic") {
-  return datastore.runQuery(query3).then(results => {
-         conv.ask(results[0][0].Quote);
-     });
+  // making the request to the Twitter API
+  let request = new XMLHttpRequest();
+  request.open("GET", "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=" + figure_name);
+  request.setRequestHeader("Authorization", "Bearer AAAAAAAAAAAAAAAAAAAAALXE%2FAAx7Jc%3D4So1KFViHNE7Hm7lPJg0gF2EeF2NsTm9aPO5L7GaQoBLW8r0BD")
+  request.send();
+  request.onload = () => {
+    console.log(request);
+    if (request.status === 200) {
+      // by default the response comes in the string format, we need to parse the data into JSON
+      // logging into console for debugging purposes
+      console.log(JSON.parse(request.response));
+    } else {
+      console.log(`error ${request.status} ${request.statusText}`);
+    }
+  };
+
+  if (quote_type == TWEET_TYPE_ENTITY) { 
+    return datastore.runQuery(query1).then(results => {
+      conv.ask("Here's what I got from " + request.response['0']['full_text'] + ". Would you like to hear more?" );
+    });
+  } else if (quote_type == ADVICE_TYPE_ENTITY) {
+    return datastore.runQuery(query2).then(results => {
+      conv.ask("I see you want some advice. Do you currently have any symptoms?");
+    });
+  } else if (quote_type == NEWS_TYPE_ENTITY) {
+    return datastore.runQuery(query3).then(results => {
+      conv.ask("I see you want to hear about news. Would you like to go back to the start?" );
+    });
   } else {
-      conv.ask("get off your ass and work instead of talking to me");
+      conv.ask("Sorry, I didn't understand. Did you want to hear more tweets?");
   }
 });
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
 app.intent(LOOKING_FOR_ADVICE_INTENT, (conv) => {
-  const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
-  if (quote_type == "motivational") { 
-      return datastore.runQuery(query1).then(results => {
-         conv.ask(results[0][1].Quote);
-     });
-  } else if (quote_type == "friendship") {
-     return datastore.runQuery(query2).then(results => {
-         conv.ask(results[0][1].Quote);
-     });
-  } else if (quote_type == "romantic") {
-  return datastore.runQuery(query3).then(results => {
-         conv.ask(results[0][0].Quote);
-     });
+  // making the request to the Twitter API
+  let request = new XMLHttpRequest();
+  request.open("GET", "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=" + figure_name);
+  request.setRequestHeader("Authorization", "Bearer AAAAAAAAAAAAAAAAAAAAALXE%2FAAx7Jc%3D4So1KFViHNE7Hm7lPJg0gF2EeF2NsTm9aPO5L7GaQoBLW8r0BD")
+  request.send();
+  request.onload = () => {
+    console.log(request);
+    if (request.status === 200) {
+      // by default the response comes in the string format, we need to parse the data into JSON
+      // logging into console for debugging purposes
+      console.log(JSON.parse(request.response));
+    } else {
+      console.log(`error ${request.status} ${request.statusText}`);
+    }
+  };
+
+  if (quote_type == TWEET_TYPE_ENTITY) { 
+    return datastore.runQuery(query1).then(results => {
+      conv.ask("Here's what I got from " + request.response['0']['full_text'] + ". Would you like to hear more?" );
+    });
+  } else if (quote_type == ADVICE_TYPE_ENTITY) {
+    return datastore.runQuery(query2).then(results => {
+      conv.ask("I see you want some advice. Do you currently have any symptoms?");
+    });
+  } else if (quote_type == NEWS_TYPE_ENTITY) {
+    return datastore.runQuery(query4).then(results => {
+      conv.ask("I see you want to hear about news. Would you like to go back to the start?" );
+    });
   } else {
-      conv.ask("get off your ass and work instead of talking to me");
+      conv.ask("Sorry, I didn't understand. Did you want to hear more tweets?");
   }
 });
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
 app.intent(LOOKING_FOR_NEWS_INTENT, (conv) => {
-  const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
-  if (quote_type == "motivational") { 
-      return datastore.runQuery(query1).then(results => {
-         conv.ask(results[0][1].Quote);
-     });
-  } else if (quote_type == "friendship") {
-     return datastore.runQuery(query2).then(results => {
-         conv.ask(results[0][1].Quote);
-     });
-  } else if (quote_type == "romantic") {
-  return datastore.runQuery(query3).then(results => {
-         conv.ask(results[0][0].Quote);
-     });
+  // making the request to the Twitter API
+  let request = new XMLHttpRequest();
+  request.open("GET", "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=" + figure_name);
+  request.setRequestHeader("Authorization", "Bearer AAAAAAAAAAAAAAAAAAAAALXE%2FAAx7Jc%3D4So1KFViHNE7Hm7lPJg0gF2EeF2NsTm9aPO5L7GaQoBLW8r0BD")
+  request.send();
+  request.onload = () => {
+    console.log(request);
+    if (request.status === 200) {
+      // by default the response comes in the string format, we need to parse the data into JSON
+      // logging into console for debugging purposes
+      console.log(JSON.parse(request.response));
+    } else {
+      console.log(`error ${request.status} ${request.statusText}`);
+    }
+  };
+
+  if (quote_type == TWEET_TYPE_ENTITY) { 
+    return datastore.runQuery(query1).then(results => {
+      conv.ask("Here's what I got from " + request.response['0']['full_text'] + ". Would you like to hear more?" );
+    });
+  } else if (quote_type == ADVICE_TYPE_ENTITY) {
+    return datastore.runQuery(query2).then(results => {
+      conv.ask("I see you want some advice. Do you currently have any symptoms?");
+    });
+  } else if (quote_type == NEWS_TYPE_ENTITY) {
+    return datastore.runQuery(query4).then(results => {
+      conv.ask("I see you want to hear about news. Would you like to go back to the start?" );
+    });
   } else {
-      conv.ask("get off your ass and work instead of talking to me");
+      conv.ask("Sorry, I didn't understand. Did you want to hear more tweets?");
   }
 });
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
-
-// In the case the user is interacting with the Action on a screened device
-// The Fake Color Carousel will display a carousel of color cards
-const fakeColorCarousel = () => {
-  const carousel = new Carousel({
-    items: {
-      'indigo taco': {
-        title: 'Indigo Taco',
-        synonyms: ['indigo', 'taco'],
-        image: new Image({
-          url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDN1JRbF9ZMHZsa1k/style-color-uiapplication-palette1.png',
-          alt: 'Indigo Taco Color',
-        }),
-      },
-      'pink unicorn': {
-        title: 'Pink Unicorn',
-        synonyms: ['pink', 'unicorn'],
-        image: new Image({
-          url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDbFVfTXpoaEE5Vzg/style-color-uiapplication-palette2.png',
-          alt: 'Pink Unicorn Color',
-        }),
-      },
-      'blue grey coffee': {
-        title: 'Blue Grey Coffee',
-        synonyms: ['blue', 'grey', 'coffee'],
-        image: new Image({
-          url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDZUdpeURtaTUwLUk/style-color-colorsystem-gray-secondary-161116.png',
-          alt: 'Blue Grey Coffee Color',
-        }),
-      },
-  }});
-  return carousel;
-};
 
 // Handle the Dialogflow intent named 'Default Welcome Intent'.
 app.intent('Default Welcome Intent', (conv) => {
@@ -271,7 +286,7 @@ app.intent('actions_intent_NO_INPUT', (conv) => {
   // Use the number of reprompts to vary response
   const repromptCount = parseInt(conv.arguments.get('REPROMPT_COUNT'));
   if (repromptCount === 0) {
-    conv.ask('Which color would you like to hear about?');
+    conv.ask('Which of the mentioned categories do you need help with?');
   } else if (repromptCount === 1) {
     conv.ask(`Please say the name of a color.`);
   } else if (conv.arguments.get('IS_FINAL_REPROMPT')) {
