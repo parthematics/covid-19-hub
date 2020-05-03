@@ -1,10 +1,10 @@
 {
-  "name": "codelab-level-three",
-  "description": "Actions on Google Codelab Level 3",
-  "author": "Google Inc",
+  "name": "covid-19-hub",
+  "description": "A one-stop shop to getting all information COVID.",
+  "author": "parthematics",
   "private": true,
   "engines": {
-    "node": "8"
+    "node": "9"
   },
   "scripts": {
     "lint": "eslint .",
