@@ -1,6 +1,6 @@
 {
   "name": "covid-19-hub",
-  "description": "A one-stop shop to getting all information COVID.",
+  "description": "A one-stop shop to getting all information COVID-19.",
   "author": "parthematics",
   "private": true,
   "engines": {
