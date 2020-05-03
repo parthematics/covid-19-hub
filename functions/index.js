@@ -34,30 +34,36 @@ const functions = require('firebase-functions');
 const {dialogflow} = require ('actions-on-google');
 const Datastore = require('@google-cloud/datastore');
 
-// Instantiate a datastore client
+// Instantiate a datastore client to hold intents and their synonymous invocations
 const datastore = Datastore();
 const WELCOME_INTENT = 'Default Welcome Intent';
 const FALLBACK_INTENT = 'Default Fallback Intent';
 const LOOKING_FOR_TWEET_INTENT = 'LookingForTweet';
 const TWEET_TYPE_ENTITY = 'TweetType';
-const LOOKING_FOR_STATS_INTENT = 'LookingForTweet';
-const STATS_TYPE_ENTITY = 'TweetType';
-const LOOKING_FOR_ADVICE_INTENT = 'LookingForTweet';
-const TWEET_TYPE_ENTITY = 'TweetType';
-const LOOKING_FOR_TWEET_INTENT = 'LookingForTweet';
-const TWEET_TYPE_ENTITY = 'TweetType';
+const LOOKING_FOR_STATS_INTENT = 'LookingForStats';
+const STATS_TYPE_ENTITY = 'StatsType';
+const LOOKING_FOR_ADVICE_INTENT = 'LookingForAdvice';
+const ADVICE_TYPE_ENTITY = 'AdviceType';
+const LOOKING_FOR_NEWS_INTENT = 'LookingForNews';
+const NEWS_TYPE_ENTITY = 'NewsType';
 
 const app = dialogflow();
 
 app.intent(WELCOME_INTENT, (conv) => {
-    conv.ask("welcome to Dr.Motivation! Ask for a quote about friendship or romance or motivation");
+    conv.ask("Welcome to COVID-19 Hub! I can provide relevant information on current statistics, \
+    tweets, news articles, and even advice on symptoms. What would you like help with?");
 });
+
 app.intent(FALLBACK_INTENT, (conv) => {
-    conv.ask("Stop mumbling & speak up");
+    conv.ask("Sorry, I didn't get that. I can help you get current statistics, tweets, news articles, \
+    and advice on symptoms. What would you like help with?");
 });
-const query1 = datastore.createQuery('QuoteTable').filter('QuoteType', '=', 'Motivational');
-const query2 = datastore.createQuery('QuoteTable').filter('QuoteType', '=', 'Friendship');
-const query3 = datastore.createQuery('QuoteTable').filter('QuoteType', '=', "Romantic");
+
+const query1 = datastore.createQuery('IntentsTable').filter('IntentType', '=', TWEET_TYPE_ENTITY);
+const query2 = datastore.createQuery('IntentsTable').filter('IntentType', '=', STATS_TYPE_ENTITY);
+const query3 = datastore.createQuery('IntentsTable').filter('IntentType', '=', ADVICE_TYPE_ENTITY);
+const query4 = datastore.createQuery('IntentsTable').filter('IntentType', '=', NEWS_TYPE_ENTITY);
+
 app.intent(LOOKING_FOR_TWEET_INTENT, (conv) => {
      const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
      if (quote_type == "motivational") { 
@@ -75,6 +81,66 @@ app.intent(LOOKING_FOR_TWEET_INTENT, (conv) => {
      } else {
          conv.ask("get off your ass and work instead of talking to me");
      }
+});
+exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
+
+app.intent(LOOKING_FOR_STATS_INTENT, (conv) => {
+  const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
+  if (quote_type == "motivational") { 
+      return datastore.runQuery(query1).then(results => {
+         conv.ask(results[0][1].Quote);
+     });
+  } else if (quote_type == "friendship") {
+     return datastore.runQuery(query2).then(results => {
+         conv.ask(results[0][1].Quote);
+     });
+  } else if (quote_type == "romantic") {
+  return datastore.runQuery(query3).then(results => {
+         conv.ask(results[0][0].Quote);
+     });
+  } else {
+      conv.ask("get off your ass and work instead of talking to me");
+  }
+});
+exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
+
+app.intent(LOOKING_FOR_ADVICE_INTENT, (conv) => {
+  const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
+  if (quote_type == "motivational") { 
+      return datastore.runQuery(query1).then(results => {
+         conv.ask(results[0][1].Quote);
+     });
+  } else if (quote_type == "friendship") {
+     return datastore.runQuery(query2).then(results => {
+         conv.ask(results[0][1].Quote);
+     });
+  } else if (quote_type == "romantic") {
+  return datastore.runQuery(query3).then(results => {
+         conv.ask(results[0][0].Quote);
+     });
+  } else {
+      conv.ask("get off your ass and work instead of talking to me");
+  }
+});
+exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
+
+app.intent(LOOKING_FOR_NEWS_INTENT, (conv) => {
+  const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
+  if (quote_type == "motivational") { 
+      return datastore.runQuery(query1).then(results => {
+         conv.ask(results[0][1].Quote);
+     });
+  } else if (quote_type == "friendship") {
+     return datastore.runQuery(query2).then(results => {
+         conv.ask(results[0][1].Quote);
+     });
+  } else if (quote_type == "romantic") {
+  return datastore.runQuery(query3).then(results => {
+         conv.ask(results[0][0].Quote);
+     });
+  } else {
+      conv.ask("get off your ass and work instead of talking to me");
+  }
 });
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
