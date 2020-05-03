@@ -221,11 +221,11 @@ app.intent('Default Welcome Intent', (conv) => {
   if (!name) {
     // Asks the user's permission to know their name, for personalization.
     conv.ask(new Permission({
-      context: 'Hi there, to get to know you better',
+      context: 'Hi there, welcome to COVID-19 Hub! Do you need any help?',
       permissions: 'NAME',
     }));
   } else {
-    conv.ask(`Hi again, ${name}. What's your favorite color?`);
+    conv.ask(`Hi again, ${name}. Would you like to continue off your previous session?`);
   }
 });
 
@@ -234,15 +234,15 @@ app.intent('Default Welcome Intent', (conv) => {
 app.intent('actions_intent_PERMISSION', (conv, params, permissionGranted) => {
   if (!permissionGranted) {
     // If the user denied our request, go ahead with the conversation.
-    conv.ask(`OK, no worries. What's your favorite color?`);
-    conv.ask(new Suggestions('Blue', 'Red', 'Green'));
+    conv.ask(`OK, no worries. Which of the following can I help you with?`);
+    conv.ask(new Suggestions('Tweets', 'Statistics', 'Advice', 'News'));
   } else {
     // If the user accepted our request, store their name in
     // the 'conv.user.storage' object for future conversations.
     conv.user.storage.userName = conv.user.name.display;
     conv.ask(`Thanks, ${conv.user.storage.userName}. ` +
-      `What's your favorite color?`);
-    conv.ask(new Suggestions('Blue', 'Red', 'Green'));
+      `Can I help you with anything else?`);
+    conv.ask(new Suggestions('Tweets', 'Statistics', 'Advice', 'News'));
   }
 });
 
