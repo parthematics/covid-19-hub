@@ -1,0 +1,23 @@
+[
+  {
+    "value": "advice",
+    "synonyms": [
+      "just some advice",
+      "i need advice"
+    ]
+  },
+  {
+    "value": "i have symptoms",
+    "synonyms": [
+      "i think i have it",
+      "i think i might have it"
+    ]
+  },
+  {
+    "value": "help",
+    "synonyms": [
+      "i need help",
+      "please help me"
+    ]
+  }
+]
