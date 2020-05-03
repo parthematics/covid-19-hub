@@ -19,7 +19,7 @@
     },
     "voiceType": "FEMALE_1",
     "capabilities": [],
-    "protocolVersion": "V2",
+    "protocolVersion": "V1",
     "autoPreviewEnabled": true,
     "isDeviceAgent": false
   },
