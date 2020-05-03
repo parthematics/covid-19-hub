@@ -1,3 +1,8 @@
+# # Commented out because this only needs to be done once.
+# get_ipython().system('pip install --upgrade pip')
+# get_ipython().system('yes | pip uninstall dialogflow')
+# get_ipython().system('pip install dialogflow==0.3.0')
+
 from google.cloud import datastore
 import os
 import dialogflow
@@ -7,10 +12,6 @@ try:
 	print(os.getcwd())
 except:
 	pass
-
-get_ipython().system('pip install --upgrade pip')
-get_ipython().system('yes | pip uninstall dialogflow')
-get_ipython().system('pip install dialogflow==0.3.0')
 
 client = datastore.Client()
 query = client.query(kind='Topic')
