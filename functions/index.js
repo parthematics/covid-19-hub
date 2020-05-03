@@ -63,24 +63,47 @@ const query1 = datastore.createQuery('IntentsTable').filter('IntentType', '=', T
 const query2 = datastore.createQuery('IntentsTable').filter('IntentType', '=', STATS_TYPE_ENTITY);
 const query3 = datastore.createQuery('IntentsTable').filter('IntentType', '=', ADVICE_TYPE_ENTITY);
 const query4 = datastore.createQuery('IntentsTable').filter('IntentType', '=', NEWS_TYPE_ENTITY);
+var figure_index = -1;
+var organization_index = -1;
 
 app.intent(LOOKING_FOR_TWEET_INTENT, (conv) => {
-     const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
-     if (quote_type == "motivational") { 
-         return datastore.runQuery(query1).then(results => {
-            conv.ask(results[0][1].Quote);
-        });
-     } else if (quote_type == "friendship") {
-        return datastore.runQuery(query2).then(results => {
-            conv.ask(results[0][1].Quote);
-        });
-     } else if (quote_type == "romantic") {
-     return datastore.runQuery(query3).then(results => {
-            conv.ask(results[0][0].Quote);
-        });
-     } else {
-         conv.ask("get off your ass and work instead of talking to me");
-     }
+  const quote_type = conv.parameters[TWEET_TYPE_ENTITY].toLowerCase();
+  // listed of trusted public figures whose tweets to trust
+  var figures = ['jburnmurdoch', 'jkwan_md', 'ishaberry2', 'aslavitt', 'scottgottliebmd', 'bogochisaac', 'erictopol', 'nachristakis'];
+  figure_index += 1;
+  figure_name = figures[figure_index];
+
+  // making the request to the Twitter API
+  let request = new XMLHttpRequest();
+  request.open("GET", "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=" + figure_name);
+  request.setRequestHeader("Authorization", "Bearer AAAAAAAAAAAAAAAAAAAAALXE%2FAAx7Jc%3D4So1KFViHNE7Hm7lPJg0gF2EeF2NsTm9aPO5L7GaQoBLW8r0BD")
+  request.send();
+  request.onload = () => {
+    console.log(request);
+    if (request.status === 200) {
+      // by default the response comes in the string format, we need to parse the data into JSON
+      // logging into console for debugging purposes
+      console.log(JSON.parse(request.response));
+    } else {
+      console.log(`error ${request.status} ${request.statusText}`);
+    }
+  };
+
+  if (quote_type == TWEET_TYPE_ENTITY) { 
+    return datastore.runQuery(query1).then(results => {
+        conv.ask("Here's what I got from " + request.response['0']['full_text'] + ". Would you like to hear more?" );
+    });
+  } else if (quote_type == ADVICE_TYPE_ENTITY) {
+    return datastore.runQuery(query2).then(results => {
+        conv.ask(results[0][1].Quote);
+    });
+  } else if (quote_type == NEWS_TYPE_ENTITY) {
+    return datastore.runQuery(query3).then(results => {
+        conv.ask(results[0][0].Quote);
+    });
+  } else {
+      conv.ask("Sorry, I didn't understand. Did you want to hear more tweets?");
+  }
 });
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
