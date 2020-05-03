@@ -23,7 +23,7 @@
         {
           "type": 0,
           "lang": "en",
-          "speech": "Sorry, I am not sure about $any . What\u0027s your favorite color?"
+          "speech": "Sorry, I am not sure about $any . What did you mean to ask by that?"
         }
       ],
       "defaultResponsePlatforms": {},
