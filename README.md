@@ -1,4 +1,4 @@
 # COVID-19 Hub
-A tool to help teachers better support their students virtually, using the power of data. You can find the DevPost [here](https://devpost.com/software/edutracker).
+An accessible voice application providing relevant information on COVID-19, including current statistics, tweets, news articles, and even advice on symptoms. You can find the DevPost [here](https://devpost.com/software/covid-19-hub-ge9fy4) and a video demonstration [here](https://www.youtube.com/watch?v=6ridyufjahc).
 
-Submitted to Hack the North 2020++.
+Submitted to TOHacks 2020.
